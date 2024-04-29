@@ -4,15 +4,13 @@ import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 import matplotlib.pyplot as plt
 from library import *
-
+from globals import NODE_COUNTER, parseGraph
 
 
 # --------------------- GRAPH VARIBLES -------------------------------
-parseGraph = None
-draw = True
-NODE_COUNTER = 0
+draw = False
 
-# --------------------- GRAPH FUCNTION TO ADD NODE --------------------
+# --------------------- GRAPH FUNCTION TO ADD NODE --------------------
 def add_node(attr):
     global parseGraph
     global NODE_COUNTER
@@ -20,6 +18,7 @@ def add_node(attr):
     attr["counter"] = NODE_COUNTER
     parseGraph.add_node( NODE_COUNTER , **attr)
     NODE_COUNTER += 1
+    
 
     return parseGraph.nodes[NODE_COUNTER-1]
 
@@ -458,6 +457,13 @@ def execute_parse_tree(tree):
     res = visit_node(tree, root_id, -1)
     if( type(res) == int or type(res) == float or type(res) == bool):
         print("TREE_RESULT: " , res)
+    return res
+
+def execute_parse_tree_testing(tree):
+    root = tree.nodes[0]
+    root_id = 0
+    res = visit_node(tree, root_id, -1)
+    return res
 
 # --------------------------------------- FUNCTION TO VISIT NODES -----------------------------
 def visit_node(tree, node_id, from_id):
@@ -580,34 +586,35 @@ def visit_node(tree, node_id, from_id):
 parser = yacc.yacc()
 
 # ---------------------------------------- LEXER EXECUTION  -------------------------------
-while True:
-    try:
-        data = input(">")
-        if(data == 'exit'):
+if __name__ == '__main__':
+    while True:
+        try:
+            data = input(">")
+            if(data == 'exit'):
+                break
+            
+            if(data == 'symbols'):
+                print(symbol_table)
+                continue
+
+        except EOFError:
             break
         
-        if(data == 'symbols'):
-            print(symbol_table)
-            continue
+        if not data: continue 
+        
+        NODE_COUNTER = 0
+        parseGraph = nx.Graph()
+        root = add_node({"type":"INITIAL" , "label":"INIT"})
+        result = parser.parse(data)
+        parseGraph.add_edge(root["counter"], result["counter"])
+        
+        labels = nx.get_node_attributes(parseGraph, 'label')
 
-    except EOFError:
-        break
-    
-    if not data: continue 
-    
-    NODE_COUNTER = 0
-    parseGraph = nx.Graph()
-    root = add_node({"type":"INITIAL" , "label":"INIT"})
-    result = parser.parse(data)
-    parseGraph.add_edge(root["counter"], result["counter"])
-    
-    labels = nx.get_node_attributes(parseGraph, 'label')
+        if(draw):
+            pos = graphviz_layout(parseGraph, prog="dot")
+            nx.draw(parseGraph, pos, labels=labels, with_labels = True)
+            plt.show()
 
-    if(draw):
-        pos = graphviz_layout(parseGraph, prog="dot")
-        nx.draw(parseGraph, pos, labels=labels, with_labels = True)
-        plt.show()
-
-    execute_parse_tree(parseGraph)
+        execute_parse_tree(parseGraph)
               
-print("Finished, accepted")
+    print("Finished, accepted")
