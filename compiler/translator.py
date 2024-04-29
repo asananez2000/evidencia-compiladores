@@ -528,10 +528,7 @@ def visit_node(tree, node_id, from_id):
         return True if res[0] and res[1] else False
     if current_node["type"] == "OR":
         return True if res[0] or res[1] else False
-    if current_node["type"] == "NOT":
-        return True if not res[0] else False
     
-
     #Simple IF statement node logic
     if current_node['type'] == 'IF':
         if res[0]:
