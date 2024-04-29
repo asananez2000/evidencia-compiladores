@@ -16,6 +16,7 @@ NODE_COUNTER = 0
 def add_node(attr):
     global parseGraph
     global NODE_COUNTER
+
     attr["counter"] = NODE_COUNTER
     parseGraph.add_node( NODE_COUNTER , **attr)
     NODE_COUNTER += 1
@@ -42,7 +43,6 @@ DIVIDE_OP = 4
 # ------------------------- RESERVED WORDS ------------------------------
 reserved = {
     'if': 'IF',
-    'else': 'ELSE',
 }
 
 # ------------------------- TOKENS --------------------------------------
@@ -67,7 +67,10 @@ tokens = (
     'EQ', 
     'NE',  
     'IF',
-    'COLON'
+    'TERNARY',
+    'COLON',
+    'AND',
+    'OR',
 )
 
 
@@ -91,8 +94,11 @@ t_EQ = r'=='
 t_NE = r'!='
 
 t_IF = r'if'
+t_TERNARY = r'\?'
 t_COLON = r':'
 
+t_AND = r'&&'
+t_OR = r'\|\|'
 
 # ---------------------------------- REGEX AS FUNCTIONS ----------------------------------
 def t_NUMBER(t):
@@ -355,7 +361,23 @@ def p_expression_NE(p):
 
 
 # LOGICAL OPERATORS -------------------------------------------------------------------------
-#PENDING
+def p_expression_AND(p):
+    '''
+    expression : LPAREN expression RPAREN AND LPAREN expression RPAREN
+    '''
+    node = add_node({"type":"AND", "label":"&&", "value":""})
+    parseGraph.add_edge(node["counter"], p[2]["counter"])
+    parseGraph.add_edge(node["counter"], p[6]["counter"])
+    p[0] = node
+
+def p_expression_OR(p):
+    '''
+    expression : LPAREN expression RPAREN OR LPAREN expression RPAREN
+    '''
+    node = add_node({"type":"OR", "label":"||", "value":""})
+    parseGraph.add_edge(node["counter"], p[2]["counter"])
+    parseGraph.add_edge(node["counter"], p[6]["counter"])
+    p[0] = node
 
 # FUNCTION CALL -----------------------------------------------------------------------------------------
 def p_factor_function_call(p):
@@ -393,8 +415,12 @@ def p_params(p):
 
 
 # CONDITIONAL STATEMENTS --------------------------------------------------------------------
+
+# Simple IF statement
 def p_expression_if(p):
-    'expression : IF LPAREN expression RPAREN COLON expression'
+    '''
+    expression : IF LPAREN expression RPAREN COLON expression
+    '''
     node = add_node({'type': 'IF', 'label': 'IF', 'value': ''})
     condition_node = p[3]
     expression_node = p[6]
@@ -403,6 +429,23 @@ def p_expression_if(p):
     parseGraph.add_edge(node["counter"], expression_node["counter"], label='expression')
 
     p[0] = node
+
+# Ternary operator
+def p_expression_ternary(p):
+    '''
+    expression : LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
+    '''
+    node = add_node({'type': 'TERNARY', 'label': '?', 'value': ''})
+
+    condition_node = p[2]
+    expression_node = p[6]
+    else_expression_node = p[10]
+
+    parseGraph.add_edge(node["counter"], condition_node["counter"], label='condition')
+    parseGraph.add_edge(node["counter"], expression_node["counter"], label='expression')
+    parseGraph.add_edge(node["counter"], else_expression_node["counter"], label='else_expression')
+    p[0] = node
+
 
 # BOILER PLATE ------------------------------------------------------------------------------
 def p_error(p):
@@ -480,12 +523,28 @@ def visit_node(tree, node_id, from_id):
         return res[0] != res[1]
     
 
+    #Logical Operators node logic
+    if current_node["type"] == "AND":
+        return True if res[0] and res[1] else False
+    if current_node["type"] == "OR":
+        return True if res[0] or res[1] else False
+    if current_node["type"] == "NOT":
+        return True if not res[0] else False
+    
+
     #Simple IF statement node logic
     if current_node['type'] == 'IF':
         if res[0]:
             return res[1]
         else:
             return None  
+
+    #Ternary Operator node logic
+    if current_node['type'] == 'TERNARY':
+        if res[0]:
+            return res[1]
+        else:
+            return res[2]  
 
     #Function call node logic
     if( current_node["type"] == "FUNCTION_CALL"):

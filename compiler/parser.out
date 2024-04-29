@@ -29,49 +29,55 @@ Rule 23    expression -> expression GE expression
 Rule 24    expression -> expression LE expression
 Rule 25    expression -> expression EQ expression
 Rule 26    expression -> expression NE expression
-Rule 27    factor -> function_call
-Rule 28    function_call -> VARIABLE LPAREN RPAREN
-Rule 29    function_call -> VARIABLE LPAREN params RPAREN
-Rule 30    params -> params COMMA expression
-Rule 31    params -> expression
-Rule 32    expression -> IF LPAREN expression RPAREN COLON expression
+Rule 27    expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN
+Rule 28    expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN
+Rule 29    factor -> function_call
+Rule 30    function_call -> VARIABLE LPAREN RPAREN
+Rule 31    function_call -> VARIABLE LPAREN params RPAREN
+Rule 32    params -> params COMMA expression
+Rule 33    params -> expression
+Rule 34    expression -> IF LPAREN expression RPAREN COLON expression
+Rule 35    expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
 
 Terminals, with rules where they appear
 
-COLON                : 32
-COMMA                : 30
+AND                  : 27
+COLON                : 34 35
+COMMA                : 32
 CONNECT              : 3 4
 DIVIDE               : 14
 EQ                   : 25
 EXP                  : 16
 GE                   : 23
 GT                   : 21
-IF                   : 32
+IF                   : 34
 LE                   : 24
-LPAREN               : 6 18 28 29 32
+LPAREN               : 6 18 27 27 28 28 30 31 34 35 35 35
 LT                   : 22
 MINUS                : 9
 NE                   : 26
 NUMBER               : 19
+OR                   : 28
 PLUS                 : 8
-RPAREN               : 6 18 28 29 32
+RPAREN               : 6 18 27 27 28 28 30 31 34 35 35 35
 SETTO                : 1 2
 STRING               : 12
+TERNARY              : 35
 TIMES                : 13
-VARIABLE             : 1 2 3 6 20 28 29
+VARIABLE             : 1 2 3 6 20 30 31
 error                : 
 
 Nonterminals, with rules where they appear
 
 assignment           : 0
 exponent             : 13 14 15
-expression           : 1 7 8 9 18 21 21 22 22 23 23 24 24 25 25 26 26 30 31 32 32
+expression           : 1 7 8 9 18 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 32 33 34 34 35 35 35
 factor               : 16 16 17
 flow                 : 2
 flow_function_call   : 4 5
 flow_functions       : 3 4
-function_call        : 27
-params               : 6 29 30
+function_call        : 29
+params               : 6 31 32
 string               : 11
 term                 : 8 9 10 13 14
 
@@ -93,7 +99,10 @@ state 0
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -103,14 +112,14 @@ state 0
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
     VARIABLE        shift and go to state 2
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
 
     assignment                     shift and go to state 1
@@ -132,8 +141,8 @@ state 2
     (1) assignment -> VARIABLE . SETTO expression
     (2) assignment -> VARIABLE . SETTO flow
     (20) factor -> VARIABLE .
-    (28) function_call -> VARIABLE . LPAREN RPAREN
-    (29) function_call -> VARIABLE . LPAREN params RPAREN
+    (30) function_call -> VARIABLE . LPAREN RPAREN
+    (31) function_call -> VARIABLE . LPAREN params RPAREN
 
     SETTO           shift and go to state 13
     EXP             reduce using rule 20 (factor -> VARIABLE .)
@@ -214,13 +223,9 @@ state 5
 
 state 6
 
-    (32) expression -> IF . LPAREN expression RPAREN COLON expression
-
-    LPAREN          shift and go to state 25
-
-
-state 7
-
+    (27) expression -> LPAREN . expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> LPAREN . expression RPAREN OR LPAREN expression RPAREN
+    (35) expression -> LPAREN . expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (18) exponent -> LPAREN . expression RPAREN
     (8) expression -> . expression PLUS term
     (9) expression -> . expression MINUS term
@@ -232,7 +237,10 @@ state 7
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -242,22 +250,29 @@ state 7
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 26
+    expression                     shift and go to state 25
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
     factor                         shift and go to state 10
     function_call                  shift and go to state 12
+
+state 7
+
+    (34) expression -> IF . LPAREN expression RPAREN COLON expression
+
+    LPAREN          shift and go to state 27
+
 
 state 8
 
@@ -338,22 +353,22 @@ state 11
 
 state 12
 
-    (27) factor -> function_call .
+    (29) factor -> function_call .
 
-    EXP             reduce using rule 27 (factor -> function_call .)
-    TIMES           reduce using rule 27 (factor -> function_call .)
-    DIVIDE          reduce using rule 27 (factor -> function_call .)
-    PLUS            reduce using rule 27 (factor -> function_call .)
-    MINUS           reduce using rule 27 (factor -> function_call .)
-    GT              reduce using rule 27 (factor -> function_call .)
-    LT              reduce using rule 27 (factor -> function_call .)
-    GE              reduce using rule 27 (factor -> function_call .)
-    LE              reduce using rule 27 (factor -> function_call .)
-    EQ              reduce using rule 27 (factor -> function_call .)
-    NE              reduce using rule 27 (factor -> function_call .)
-    $end            reduce using rule 27 (factor -> function_call .)
-    RPAREN          reduce using rule 27 (factor -> function_call .)
-    COMMA           reduce using rule 27 (factor -> function_call .)
+    EXP             reduce using rule 29 (factor -> function_call .)
+    TIMES           reduce using rule 29 (factor -> function_call .)
+    DIVIDE          reduce using rule 29 (factor -> function_call .)
+    PLUS            reduce using rule 29 (factor -> function_call .)
+    MINUS           reduce using rule 29 (factor -> function_call .)
+    GT              reduce using rule 29 (factor -> function_call .)
+    LT              reduce using rule 29 (factor -> function_call .)
+    GE              reduce using rule 29 (factor -> function_call .)
+    LE              reduce using rule 29 (factor -> function_call .)
+    EQ              reduce using rule 29 (factor -> function_call .)
+    NE              reduce using rule 29 (factor -> function_call .)
+    $end            reduce using rule 29 (factor -> function_call .)
+    RPAREN          reduce using rule 29 (factor -> function_call .)
+    COMMA           reduce using rule 29 (factor -> function_call .)
 
 
 state 13
@@ -370,7 +385,10 @@ state 13
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (3) flow -> . VARIABLE CONNECT flow_functions
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -381,14 +399,14 @@ state 13
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     VARIABLE        shift and go to state 29
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
 
     expression                     shift and go to state 30
@@ -401,10 +419,10 @@ state 13
 
 state 14
 
-    (28) function_call -> VARIABLE LPAREN . RPAREN
-    (29) function_call -> VARIABLE LPAREN . params RPAREN
-    (30) params -> . params COMMA expression
-    (31) params -> . expression
+    (30) function_call -> VARIABLE LPAREN . RPAREN
+    (31) function_call -> VARIABLE LPAREN . params RPAREN
+    (32) params -> . params COMMA expression
+    (33) params -> . expression
     (8) expression -> . expression PLUS term
     (9) expression -> . expression MINUS term
     (10) expression -> . term
@@ -415,7 +433,10 @@ state 14
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -425,16 +446,16 @@ state 14
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
     RPAREN          shift and go to state 32
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
     params                         shift and go to state 33
     expression                     shift and go to state 34
@@ -455,13 +476,13 @@ state 15
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    LPAREN          shift and go to state 7
+    LPAREN          shift and go to state 36
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
     term                           shift and go to state 35
     exponent                       shift and go to state 8
@@ -479,15 +500,15 @@ state 16
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    LPAREN          shift and go to state 7
+    LPAREN          shift and go to state 36
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    term                           shift and go to state 36
+    term                           shift and go to state 37
     exponent                       shift and go to state 8
     factor                         shift and go to state 10
     function_call                  shift and go to state 12
@@ -505,7 +526,10 @@ state 17
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -515,17 +539,17 @@ state 17
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 37
+    expression                     shift and go to state 38
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
@@ -545,7 +569,10 @@ state 18
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -555,17 +582,17 @@ state 18
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 38
+    expression                     shift and go to state 39
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
@@ -585,7 +612,10 @@ state 19
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -595,17 +625,17 @@ state 19
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 39
+    expression                     shift and go to state 40
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
@@ -625,7 +655,10 @@ state 20
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -635,17 +668,17 @@ state 20
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 40
+    expression                     shift and go to state 41
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
@@ -665,7 +698,10 @@ state 21
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -675,17 +711,17 @@ state 21
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 41
+    expression                     shift and go to state 42
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
@@ -705,7 +741,10 @@ state 22
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -715,17 +754,17 @@ state 22
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 42
+    expression                     shift and go to state 43
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
@@ -740,15 +779,15 @@ state 23
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    LPAREN          shift and go to state 7
+    LPAREN          shift and go to state 36
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    exponent                       shift and go to state 43
+    exponent                       shift and go to state 44
     factor                         shift and go to state 10
     function_call                  shift and go to state 12
 
@@ -760,60 +799,23 @@ state 24
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    LPAREN          shift and go to state 7
+    LPAREN          shift and go to state 36
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    exponent                       shift and go to state 44
+    exponent                       shift and go to state 45
     factor                         shift and go to state 10
     function_call                  shift and go to state 12
 
 state 25
 
-    (32) expression -> IF LPAREN . expression RPAREN COLON expression
-    (8) expression -> . expression PLUS term
-    (9) expression -> . expression MINUS term
-    (10) expression -> . term
-    (11) expression -> . string
-    (21) expression -> . expression GT expression
-    (22) expression -> . expression LT expression
-    (23) expression -> . expression GE expression
-    (24) expression -> . expression LE expression
-    (25) expression -> . expression EQ expression
-    (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
-    (13) term -> . term TIMES exponent
-    (14) term -> . term DIVIDE exponent
-    (15) term -> . exponent
-    (12) string -> . STRING
-    (16) exponent -> . factor EXP factor
-    (17) exponent -> . factor
-    (18) exponent -> . LPAREN expression RPAREN
-    (19) factor -> . NUMBER
-    (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
-
-    IF              shift and go to state 6
-    STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
-    NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
-
-    expression                     shift and go to state 45
-    term                           shift and go to state 4
-    string                         shift and go to state 5
-    exponent                       shift and go to state 8
-    factor                         shift and go to state 10
-    function_call                  shift and go to state 12
-
-state 26
-
+    (27) expression -> LPAREN expression . RPAREN AND LPAREN expression RPAREN
+    (28) expression -> LPAREN expression . RPAREN OR LPAREN expression RPAREN
+    (35) expression -> LPAREN expression . RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (18) exponent -> LPAREN expression . RPAREN
     (8) expression -> expression . PLUS term
     (9) expression -> expression . MINUS term
@@ -835,11 +837,11 @@ state 26
     NE              shift and go to state 22
 
 
-state 27
+state 26
 
     (20) factor -> VARIABLE .
-    (28) function_call -> VARIABLE . LPAREN RPAREN
-    (29) function_call -> VARIABLE . LPAREN params RPAREN
+    (30) function_call -> VARIABLE . LPAREN RPAREN
+    (31) function_call -> VARIABLE . LPAREN params RPAREN
 
     EXP             reduce using rule 20 (factor -> VARIABLE .)
     TIMES           reduce using rule 20 (factor -> VARIABLE .)
@@ -858,29 +860,72 @@ state 27
     LPAREN          shift and go to state 14
 
 
+state 27
+
+    (34) expression -> IF LPAREN . expression RPAREN COLON expression
+    (8) expression -> . expression PLUS term
+    (9) expression -> . expression MINUS term
+    (10) expression -> . term
+    (11) expression -> . string
+    (21) expression -> . expression GT expression
+    (22) expression -> . expression LT expression
+    (23) expression -> . expression GE expression
+    (24) expression -> . expression LE expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NE expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
+    (13) term -> . term TIMES exponent
+    (14) term -> . term DIVIDE exponent
+    (15) term -> . exponent
+    (12) string -> . STRING
+    (16) exponent -> . factor EXP factor
+    (17) exponent -> . factor
+    (18) exponent -> . LPAREN expression RPAREN
+    (19) factor -> . NUMBER
+    (20) factor -> . VARIABLE
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
+
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
+    STRING          shift and go to state 9
+    NUMBER          shift and go to state 11
+    VARIABLE        shift and go to state 26
+
+    expression                     shift and go to state 47
+    term                           shift and go to state 4
+    string                         shift and go to state 5
+    exponent                       shift and go to state 8
+    factor                         shift and go to state 10
+    function_call                  shift and go to state 12
+
 state 28
 
     (16) exponent -> factor EXP . factor
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    factor                         shift and go to state 47
+    factor                         shift and go to state 48
     function_call                  shift and go to state 12
 
 state 29
 
     (3) flow -> VARIABLE . CONNECT flow_functions
     (20) factor -> VARIABLE .
-    (28) function_call -> VARIABLE . LPAREN RPAREN
-    (29) function_call -> VARIABLE . LPAREN params RPAREN
+    (30) function_call -> VARIABLE . LPAREN RPAREN
+    (31) function_call -> VARIABLE . LPAREN params RPAREN
 
-    CONNECT         shift and go to state 48
+    CONNECT         shift and go to state 49
     EXP             reduce using rule 20 (factor -> VARIABLE .)
     TIMES           reduce using rule 20 (factor -> VARIABLE .)
     DIVIDE          reduce using rule 20 (factor -> VARIABLE .)
@@ -928,36 +973,36 @@ state 31
 
 state 32
 
-    (28) function_call -> VARIABLE LPAREN RPAREN .
+    (30) function_call -> VARIABLE LPAREN RPAREN .
 
-    EXP             reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    TIMES           reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    DIVIDE          reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    PLUS            reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    MINUS           reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    GT              reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    LT              reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    GE              reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    LE              reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    EQ              reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    NE              reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    $end            reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    RPAREN          reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
-    COMMA           reduce using rule 28 (function_call -> VARIABLE LPAREN RPAREN .)
+    EXP             reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    TIMES           reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    DIVIDE          reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    PLUS            reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    MINUS           reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    GT              reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    LT              reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    GE              reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    LE              reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    EQ              reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    NE              reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    $end            reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    RPAREN          reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    COMMA           reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
 
 
 state 33
 
-    (29) function_call -> VARIABLE LPAREN params . RPAREN
-    (30) params -> params . COMMA expression
+    (31) function_call -> VARIABLE LPAREN params . RPAREN
+    (32) params -> params . COMMA expression
 
-    RPAREN          shift and go to state 49
-    COMMA           shift and go to state 50
+    RPAREN          shift and go to state 50
+    COMMA           shift and go to state 51
 
 
 state 34
 
-    (31) params -> expression .
+    (33) params -> expression .
     (8) expression -> expression . PLUS term
     (9) expression -> expression . MINUS term
     (21) expression -> expression . GT expression
@@ -967,8 +1012,8 @@ state 34
     (25) expression -> expression . EQ expression
     (26) expression -> expression . NE expression
 
-    RPAREN          reduce using rule 31 (params -> expression .)
-    COMMA           reduce using rule 31 (params -> expression .)
+    RPAREN          reduce using rule 33 (params -> expression .)
+    COMMA           reduce using rule 33 (params -> expression .)
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1002,6 +1047,49 @@ state 35
 
 state 36
 
+    (18) exponent -> LPAREN . expression RPAREN
+    (8) expression -> . expression PLUS term
+    (9) expression -> . expression MINUS term
+    (10) expression -> . term
+    (11) expression -> . string
+    (21) expression -> . expression GT expression
+    (22) expression -> . expression LT expression
+    (23) expression -> . expression GE expression
+    (24) expression -> . expression LE expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NE expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
+    (13) term -> . term TIMES exponent
+    (14) term -> . term DIVIDE exponent
+    (15) term -> . exponent
+    (12) string -> . STRING
+    (16) exponent -> . factor EXP factor
+    (17) exponent -> . factor
+    (18) exponent -> . LPAREN expression RPAREN
+    (19) factor -> . NUMBER
+    (20) factor -> . VARIABLE
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
+
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
+    STRING          shift and go to state 9
+    NUMBER          shift and go to state 11
+    VARIABLE        shift and go to state 26
+
+    expression                     shift and go to state 52
+    term                           shift and go to state 4
+    string                         shift and go to state 5
+    exponent                       shift and go to state 8
+    factor                         shift and go to state 10
+    function_call                  shift and go to state 12
+
+state 37
+
     (9) expression -> expression MINUS term .
     (13) term -> term . TIMES exponent
     (14) term -> term . DIVIDE exponent
@@ -1021,7 +1109,7 @@ state 36
     DIVIDE          shift and go to state 24
 
 
-state 37
+state 38
 
     (21) expression -> expression GT expression .
     (8) expression -> expression . PLUS term
@@ -1063,7 +1151,7 @@ state 37
   ! NE              [ reduce using rule 21 (expression -> expression GT expression .) ]
 
 
-state 38
+state 39
 
     (22) expression -> expression LT expression .
     (8) expression -> expression . PLUS term
@@ -1105,7 +1193,7 @@ state 38
   ! NE              [ reduce using rule 22 (expression -> expression LT expression .) ]
 
 
-state 39
+state 40
 
     (23) expression -> expression GE expression .
     (8) expression -> expression . PLUS term
@@ -1147,7 +1235,7 @@ state 39
   ! NE              [ reduce using rule 23 (expression -> expression GE expression .) ]
 
 
-state 40
+state 41
 
     (24) expression -> expression LE expression .
     (8) expression -> expression . PLUS term
@@ -1189,7 +1277,7 @@ state 40
   ! NE              [ reduce using rule 24 (expression -> expression LE expression .) ]
 
 
-state 41
+state 42
 
     (25) expression -> expression EQ expression .
     (8) expression -> expression . PLUS term
@@ -1231,7 +1319,7 @@ state 41
   ! NE              [ reduce using rule 25 (expression -> expression EQ expression .) ]
 
 
-state 42
+state 43
 
     (26) expression -> expression NE expression .
     (8) expression -> expression . PLUS term
@@ -1273,7 +1361,7 @@ state 42
   ! NE              [ reduce using rule 26 (expression -> expression NE expression .) ]
 
 
-state 43
+state 44
 
     (13) term -> term TIMES exponent .
 
@@ -1292,7 +1380,7 @@ state 43
     COMMA           reduce using rule 13 (term -> term TIMES exponent .)
 
 
-state 44
+state 45
 
     (14) term -> term DIVIDE exponent .
 
@@ -1311,33 +1399,16 @@ state 44
     COMMA           reduce using rule 14 (term -> term DIVIDE exponent .)
 
 
-state 45
-
-    (32) expression -> IF LPAREN expression . RPAREN COLON expression
-    (8) expression -> expression . PLUS term
-    (9) expression -> expression . MINUS term
-    (21) expression -> expression . GT expression
-    (22) expression -> expression . LT expression
-    (23) expression -> expression . GE expression
-    (24) expression -> expression . LE expression
-    (25) expression -> expression . EQ expression
-    (26) expression -> expression . NE expression
-
-    RPAREN          shift and go to state 51
-    PLUS            shift and go to state 15
-    MINUS           shift and go to state 16
-    GT              shift and go to state 17
-    LT              shift and go to state 18
-    GE              shift and go to state 19
-    LE              shift and go to state 20
-    EQ              shift and go to state 21
-    NE              shift and go to state 22
-
-
 state 46
 
+    (27) expression -> LPAREN expression RPAREN . AND LPAREN expression RPAREN
+    (28) expression -> LPAREN expression RPAREN . OR LPAREN expression RPAREN
+    (35) expression -> LPAREN expression RPAREN . TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (18) exponent -> LPAREN expression RPAREN .
 
+    AND             shift and go to state 53
+    OR              shift and go to state 54
+    TERNARY         shift and go to state 55
     TIMES           reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
     DIVIDE          reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
     PLUS            reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
@@ -1354,6 +1425,29 @@ state 46
 
 
 state 47
+
+    (34) expression -> IF LPAREN expression . RPAREN COLON expression
+    (8) expression -> expression . PLUS term
+    (9) expression -> expression . MINUS term
+    (21) expression -> expression . GT expression
+    (22) expression -> expression . LT expression
+    (23) expression -> expression . GE expression
+    (24) expression -> expression . LE expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NE expression
+
+    RPAREN          shift and go to state 56
+    PLUS            shift and go to state 15
+    MINUS           shift and go to state 16
+    GT              shift and go to state 17
+    LT              shift and go to state 18
+    GE              shift and go to state 19
+    LE              shift and go to state 20
+    EQ              shift and go to state 21
+    NE              shift and go to state 22
+
+
+state 48
 
     (16) exponent -> factor EXP factor .
 
@@ -1372,41 +1466,41 @@ state 47
     COMMA           reduce using rule 16 (exponent -> factor EXP factor .)
 
 
-state 48
+state 49
 
     (3) flow -> VARIABLE CONNECT . flow_functions
     (4) flow_functions -> . flow_function_call CONNECT flow_functions
     (5) flow_functions -> . flow_function_call
     (6) flow_function_call -> . VARIABLE LPAREN params RPAREN
 
-    VARIABLE        shift and go to state 52
+    VARIABLE        shift and go to state 57
 
-    flow_functions                 shift and go to state 53
-    flow_function_call             shift and go to state 54
-
-state 49
-
-    (29) function_call -> VARIABLE LPAREN params RPAREN .
-
-    EXP             reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    TIMES           reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    DIVIDE          reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    PLUS            reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    MINUS           reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    GT              reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    LT              reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    GE              reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    LE              reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    EQ              reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    NE              reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    $end            reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    RPAREN          reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-    COMMA           reduce using rule 29 (function_call -> VARIABLE LPAREN params RPAREN .)
-
+    flow_functions                 shift and go to state 58
+    flow_function_call             shift and go to state 59
 
 state 50
 
-    (30) params -> params COMMA . expression
+    (31) function_call -> VARIABLE LPAREN params RPAREN .
+
+    EXP             reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    TIMES           reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    DIVIDE          reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    PLUS            reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    MINUS           reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    GT              reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    LT              reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    GE              reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    LE              reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    EQ              reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    NE              reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    $end            reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    RPAREN          reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    COMMA           reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+
+
+state 51
+
+    (32) params -> params COMMA . expression
     (8) expression -> . expression PLUS term
     (9) expression -> . expression MINUS term
     (10) expression -> . term
@@ -1417,7 +1511,10 @@ state 50
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -1427,56 +1524,26 @@ state 50
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 55
+    expression                     shift and go to state 60
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
     factor                         shift and go to state 10
     function_call                  shift and go to state 12
 
-state 51
-
-    (32) expression -> IF LPAREN expression RPAREN . COLON expression
-
-    COLON           shift and go to state 56
-
-
 state 52
 
-    (6) flow_function_call -> VARIABLE . LPAREN params RPAREN
-
-    LPAREN          shift and go to state 57
-
-
-state 53
-
-    (3) flow -> VARIABLE CONNECT flow_functions .
-
-    $end            reduce using rule 3 (flow -> VARIABLE CONNECT flow_functions .)
-
-
-state 54
-
-    (4) flow_functions -> flow_function_call . CONNECT flow_functions
-    (5) flow_functions -> flow_function_call .
-
-    CONNECT         shift and go to state 58
-    $end            reduce using rule 5 (flow_functions -> flow_function_call .)
-
-
-state 55
-
-    (30) params -> params COMMA expression .
+    (18) exponent -> LPAREN expression . RPAREN
     (8) expression -> expression . PLUS term
     (9) expression -> expression . MINUS term
     (21) expression -> expression . GT expression
@@ -1486,8 +1553,7 @@ state 55
     (25) expression -> expression . EQ expression
     (26) expression -> expression . NE expression
 
-    RPAREN          reduce using rule 30 (params -> params COMMA expression .)
-    COMMA           reduce using rule 30 (params -> params COMMA expression .)
+    RPAREN          shift and go to state 61
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1498,9 +1564,103 @@ state 55
     NE              shift and go to state 22
 
 
+state 53
+
+    (27) expression -> LPAREN expression RPAREN AND . LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 62
+
+
+state 54
+
+    (28) expression -> LPAREN expression RPAREN OR . LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 63
+
+
+state 55
+
+    (35) expression -> LPAREN expression RPAREN TERNARY . LPAREN expression RPAREN COLON LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 64
+
+
 state 56
 
-    (32) expression -> IF LPAREN expression RPAREN COLON . expression
+    (34) expression -> IF LPAREN expression RPAREN . COLON expression
+
+    COLON           shift and go to state 65
+
+
+state 57
+
+    (6) flow_function_call -> VARIABLE . LPAREN params RPAREN
+
+    LPAREN          shift and go to state 66
+
+
+state 58
+
+    (3) flow -> VARIABLE CONNECT flow_functions .
+
+    $end            reduce using rule 3 (flow -> VARIABLE CONNECT flow_functions .)
+
+
+state 59
+
+    (4) flow_functions -> flow_function_call . CONNECT flow_functions
+    (5) flow_functions -> flow_function_call .
+
+    CONNECT         shift and go to state 67
+    $end            reduce using rule 5 (flow_functions -> flow_function_call .)
+
+
+state 60
+
+    (32) params -> params COMMA expression .
+    (8) expression -> expression . PLUS term
+    (9) expression -> expression . MINUS term
+    (21) expression -> expression . GT expression
+    (22) expression -> expression . LT expression
+    (23) expression -> expression . GE expression
+    (24) expression -> expression . LE expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NE expression
+
+    RPAREN          reduce using rule 32 (params -> params COMMA expression .)
+    COMMA           reduce using rule 32 (params -> params COMMA expression .)
+    PLUS            shift and go to state 15
+    MINUS           shift and go to state 16
+    GT              shift and go to state 17
+    LT              shift and go to state 18
+    GE              shift and go to state 19
+    LE              shift and go to state 20
+    EQ              shift and go to state 21
+    NE              shift and go to state 22
+
+
+state 61
+
+    (18) exponent -> LPAREN expression RPAREN .
+
+    TIMES           reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    PLUS            reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    GT              reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    LT              reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    GE              reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    LE              reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    EQ              reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    NE              reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    $end            reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    COMMA           reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+
+
+state 62
+
+    (27) expression -> LPAREN expression RPAREN AND LPAREN . expression RPAREN
     (8) expression -> . expression PLUS term
     (9) expression -> . expression MINUS term
     (10) expression -> . term
@@ -1511,7 +1671,10 @@ state 56
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -1521,28 +1684,26 @@ state 56
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 59
+    expression                     shift and go to state 68
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
     factor                         shift and go to state 10
     function_call                  shift and go to state 12
 
-state 57
+state 63
 
-    (6) flow_function_call -> VARIABLE LPAREN . params RPAREN
-    (30) params -> . params COMMA expression
-    (31) params -> . expression
+    (28) expression -> LPAREN expression RPAREN OR LPAREN . expression RPAREN
     (8) expression -> . expression PLUS term
     (9) expression -> . expression MINUS term
     (10) expression -> . term
@@ -1553,7 +1714,10 @@ state 57
     (24) expression -> . expression LE expression
     (25) expression -> . expression EQ expression
     (26) expression -> . expression NE expression
-    (32) expression -> . IF LPAREN expression RPAREN COLON expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
     (15) term -> . exponent
@@ -1563,17 +1727,148 @@ state 57
     (18) exponent -> . LPAREN expression RPAREN
     (19) factor -> . NUMBER
     (20) factor -> . VARIABLE
-    (27) factor -> . function_call
-    (28) function_call -> . VARIABLE LPAREN RPAREN
-    (29) function_call -> . VARIABLE LPAREN params RPAREN
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
 
-    IF              shift and go to state 6
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
     STRING          shift and go to state 9
-    LPAREN          shift and go to state 7
     NUMBER          shift and go to state 11
-    VARIABLE        shift and go to state 27
+    VARIABLE        shift and go to state 26
 
-    params                         shift and go to state 60
+    expression                     shift and go to state 69
+    term                           shift and go to state 4
+    string                         shift and go to state 5
+    exponent                       shift and go to state 8
+    factor                         shift and go to state 10
+    function_call                  shift and go to state 12
+
+state 64
+
+    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN . expression RPAREN COLON LPAREN expression RPAREN
+    (8) expression -> . expression PLUS term
+    (9) expression -> . expression MINUS term
+    (10) expression -> . term
+    (11) expression -> . string
+    (21) expression -> . expression GT expression
+    (22) expression -> . expression LT expression
+    (23) expression -> . expression GE expression
+    (24) expression -> . expression LE expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NE expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
+    (13) term -> . term TIMES exponent
+    (14) term -> . term DIVIDE exponent
+    (15) term -> . exponent
+    (12) string -> . STRING
+    (16) exponent -> . factor EXP factor
+    (17) exponent -> . factor
+    (18) exponent -> . LPAREN expression RPAREN
+    (19) factor -> . NUMBER
+    (20) factor -> . VARIABLE
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
+
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
+    STRING          shift and go to state 9
+    NUMBER          shift and go to state 11
+    VARIABLE        shift and go to state 26
+
+    expression                     shift and go to state 70
+    term                           shift and go to state 4
+    string                         shift and go to state 5
+    exponent                       shift and go to state 8
+    factor                         shift and go to state 10
+    function_call                  shift and go to state 12
+
+state 65
+
+    (34) expression -> IF LPAREN expression RPAREN COLON . expression
+    (8) expression -> . expression PLUS term
+    (9) expression -> . expression MINUS term
+    (10) expression -> . term
+    (11) expression -> . string
+    (21) expression -> . expression GT expression
+    (22) expression -> . expression LT expression
+    (23) expression -> . expression GE expression
+    (24) expression -> . expression LE expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NE expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
+    (13) term -> . term TIMES exponent
+    (14) term -> . term DIVIDE exponent
+    (15) term -> . exponent
+    (12) string -> . STRING
+    (16) exponent -> . factor EXP factor
+    (17) exponent -> . factor
+    (18) exponent -> . LPAREN expression RPAREN
+    (19) factor -> . NUMBER
+    (20) factor -> . VARIABLE
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
+
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
+    STRING          shift and go to state 9
+    NUMBER          shift and go to state 11
+    VARIABLE        shift and go to state 26
+
+    expression                     shift and go to state 71
+    term                           shift and go to state 4
+    string                         shift and go to state 5
+    exponent                       shift and go to state 8
+    factor                         shift and go to state 10
+    function_call                  shift and go to state 12
+
+state 66
+
+    (6) flow_function_call -> VARIABLE LPAREN . params RPAREN
+    (32) params -> . params COMMA expression
+    (33) params -> . expression
+    (8) expression -> . expression PLUS term
+    (9) expression -> . expression MINUS term
+    (10) expression -> . term
+    (11) expression -> . string
+    (21) expression -> . expression GT expression
+    (22) expression -> . expression LT expression
+    (23) expression -> . expression GE expression
+    (24) expression -> . expression LE expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NE expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
+    (13) term -> . term TIMES exponent
+    (14) term -> . term DIVIDE exponent
+    (15) term -> . exponent
+    (12) string -> . STRING
+    (16) exponent -> . factor EXP factor
+    (17) exponent -> . factor
+    (18) exponent -> . LPAREN expression RPAREN
+    (19) factor -> . NUMBER
+    (20) factor -> . VARIABLE
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
+
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
+    STRING          shift and go to state 9
+    NUMBER          shift and go to state 11
+    VARIABLE        shift and go to state 26
+
+    params                         shift and go to state 72
     expression                     shift and go to state 34
     term                           shift and go to state 4
     string                         shift and go to state 5
@@ -1581,21 +1876,90 @@ state 57
     factor                         shift and go to state 10
     function_call                  shift and go to state 12
 
-state 58
+state 67
 
     (4) flow_functions -> flow_function_call CONNECT . flow_functions
     (4) flow_functions -> . flow_function_call CONNECT flow_functions
     (5) flow_functions -> . flow_function_call
     (6) flow_function_call -> . VARIABLE LPAREN params RPAREN
 
-    VARIABLE        shift and go to state 52
+    VARIABLE        shift and go to state 57
 
-    flow_function_call             shift and go to state 54
-    flow_functions                 shift and go to state 61
+    flow_function_call             shift and go to state 59
+    flow_functions                 shift and go to state 73
 
-state 59
+state 68
 
-    (32) expression -> IF LPAREN expression RPAREN COLON expression .
+    (27) expression -> LPAREN expression RPAREN AND LPAREN expression . RPAREN
+    (8) expression -> expression . PLUS term
+    (9) expression -> expression . MINUS term
+    (21) expression -> expression . GT expression
+    (22) expression -> expression . LT expression
+    (23) expression -> expression . GE expression
+    (24) expression -> expression . LE expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NE expression
+
+    RPAREN          shift and go to state 74
+    PLUS            shift and go to state 15
+    MINUS           shift and go to state 16
+    GT              shift and go to state 17
+    LT              shift and go to state 18
+    GE              shift and go to state 19
+    LE              shift and go to state 20
+    EQ              shift and go to state 21
+    NE              shift and go to state 22
+
+
+state 69
+
+    (28) expression -> LPAREN expression RPAREN OR LPAREN expression . RPAREN
+    (8) expression -> expression . PLUS term
+    (9) expression -> expression . MINUS term
+    (21) expression -> expression . GT expression
+    (22) expression -> expression . LT expression
+    (23) expression -> expression . GE expression
+    (24) expression -> expression . LE expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NE expression
+
+    RPAREN          shift and go to state 75
+    PLUS            shift and go to state 15
+    MINUS           shift and go to state 16
+    GT              shift and go to state 17
+    LT              shift and go to state 18
+    GE              shift and go to state 19
+    LE              shift and go to state 20
+    EQ              shift and go to state 21
+    NE              shift and go to state 22
+
+
+state 70
+
+    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression . RPAREN COLON LPAREN expression RPAREN
+    (8) expression -> expression . PLUS term
+    (9) expression -> expression . MINUS term
+    (21) expression -> expression . GT expression
+    (22) expression -> expression . LT expression
+    (23) expression -> expression . GE expression
+    (24) expression -> expression . LE expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NE expression
+
+    RPAREN          shift and go to state 76
+    PLUS            shift and go to state 15
+    MINUS           shift and go to state 16
+    GT              shift and go to state 17
+    LT              shift and go to state 18
+    GE              shift and go to state 19
+    LE              shift and go to state 20
+    EQ              shift and go to state 21
+    NE              shift and go to state 22
+
+
+state 71
+
+    (34) expression -> IF LPAREN expression RPAREN COLON expression .
     (8) expression -> expression . PLUS term
     (9) expression -> expression . MINUS term
     (21) expression -> expression . GT expression
@@ -1613,9 +1977,9 @@ state 59
   ! shift/reduce conflict for LE resolved as shift
   ! shift/reduce conflict for EQ resolved as shift
   ! shift/reduce conflict for NE resolved as shift
-    $end            reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .)
-    RPAREN          reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .)
-    COMMA           reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .)
+    $end            reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .)
+    RPAREN          reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .)
+    COMMA           reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .)
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1625,50 +1989,173 @@ state 59
     EQ              shift and go to state 21
     NE              shift and go to state 22
 
-  ! PLUS            [ reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! MINUS           [ reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! GT              [ reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! LT              [ reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! GE              [ reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! LE              [ reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! EQ              [ reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! NE              [ reduce using rule 32 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
+  ! PLUS            [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
+  ! MINUS           [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
+  ! GT              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
+  ! LT              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
+  ! GE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
+  ! LE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
+  ! EQ              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
+  ! NE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
 
 
-state 60
+state 72
 
     (6) flow_function_call -> VARIABLE LPAREN params . RPAREN
-    (30) params -> params . COMMA expression
+    (32) params -> params . COMMA expression
 
-    RPAREN          shift and go to state 62
-    COMMA           shift and go to state 50
+    RPAREN          shift and go to state 77
+    COMMA           shift and go to state 51
 
 
-state 61
+state 73
 
     (4) flow_functions -> flow_function_call CONNECT flow_functions .
 
     $end            reduce using rule 4 (flow_functions -> flow_function_call CONNECT flow_functions .)
 
 
-state 62
+state 74
+
+    (27) expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .
+
+    PLUS            reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    MINUS           reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    GT              reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    LT              reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    GE              reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    LE              reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    EQ              reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    NE              reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    $end            reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    COMMA           reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+
+
+state 75
+
+    (28) expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .
+
+    PLUS            reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    MINUS           reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    GT              reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    LT              reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    GE              reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    LE              reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    EQ              reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    NE              reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    $end            reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    COMMA           reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+
+
+state 76
+
+    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN . COLON LPAREN expression RPAREN
+
+    COLON           shift and go to state 78
+
+
+state 77
 
     (6) flow_function_call -> VARIABLE LPAREN params RPAREN .
 
     CONNECT         reduce using rule 6 (flow_function_call -> VARIABLE LPAREN params RPAREN .)
     $end            reduce using rule 6 (flow_function_call -> VARIABLE LPAREN params RPAREN .)
 
+
+state 78
+
+    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON . LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 79
+
+
+state 79
+
+    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN . expression RPAREN
+    (8) expression -> . expression PLUS term
+    (9) expression -> . expression MINUS term
+    (10) expression -> . term
+    (11) expression -> . string
+    (21) expression -> . expression GT expression
+    (22) expression -> . expression LT expression
+    (23) expression -> . expression GE expression
+    (24) expression -> . expression LE expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NE expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
+    (13) term -> . term TIMES exponent
+    (14) term -> . term DIVIDE exponent
+    (15) term -> . exponent
+    (12) string -> . STRING
+    (16) exponent -> . factor EXP factor
+    (17) exponent -> . factor
+    (18) exponent -> . LPAREN expression RPAREN
+    (19) factor -> . NUMBER
+    (20) factor -> . VARIABLE
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
+
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
+    STRING          shift and go to state 9
+    NUMBER          shift and go to state 11
+    VARIABLE        shift and go to state 26
+
+    expression                     shift and go to state 80
+    term                           shift and go to state 4
+    string                         shift and go to state 5
+    exponent                       shift and go to state 8
+    factor                         shift and go to state 10
+    function_call                  shift and go to state 12
+
+state 80
+
+    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression . RPAREN
+    (8) expression -> expression . PLUS term
+    (9) expression -> expression . MINUS term
+    (21) expression -> expression . GT expression
+    (22) expression -> expression . LT expression
+    (23) expression -> expression . GE expression
+    (24) expression -> expression . LE expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NE expression
+
+    RPAREN          shift and go to state 81
+    PLUS            shift and go to state 15
+    MINUS           shift and go to state 16
+    GT              shift and go to state 17
+    LT              shift and go to state 18
+    GE              shift and go to state 19
+    LE              shift and go to state 20
+    EQ              shift and go to state 21
+    NE              shift and go to state 22
+
+
+state 81
+
+    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .
+
+    PLUS            reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    MINUS           reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    GT              reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    LT              reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    GE              reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    LE              reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    EQ              reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    NE              reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    $end            reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    COMMA           reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: shift/reduce conflict for PLUS in state 37 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 37 resolved as shift
-WARNING: shift/reduce conflict for GT in state 37 resolved as shift
-WARNING: shift/reduce conflict for LT in state 37 resolved as shift
-WARNING: shift/reduce conflict for GE in state 37 resolved as shift
-WARNING: shift/reduce conflict for LE in state 37 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 37 resolved as shift
-WARNING: shift/reduce conflict for NE in state 37 resolved as shift
 WARNING: shift/reduce conflict for PLUS in state 38 resolved as shift
 WARNING: shift/reduce conflict for MINUS in state 38 resolved as shift
 WARNING: shift/reduce conflict for GT in state 38 resolved as shift
@@ -1709,11 +2196,19 @@ WARNING: shift/reduce conflict for GE in state 42 resolved as shift
 WARNING: shift/reduce conflict for LE in state 42 resolved as shift
 WARNING: shift/reduce conflict for EQ in state 42 resolved as shift
 WARNING: shift/reduce conflict for NE in state 42 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 59 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 59 resolved as shift
-WARNING: shift/reduce conflict for GT in state 59 resolved as shift
-WARNING: shift/reduce conflict for LT in state 59 resolved as shift
-WARNING: shift/reduce conflict for GE in state 59 resolved as shift
-WARNING: shift/reduce conflict for LE in state 59 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 59 resolved as shift
-WARNING: shift/reduce conflict for NE in state 59 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 43 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 43 resolved as shift
+WARNING: shift/reduce conflict for GT in state 43 resolved as shift
+WARNING: shift/reduce conflict for LT in state 43 resolved as shift
+WARNING: shift/reduce conflict for GE in state 43 resolved as shift
+WARNING: shift/reduce conflict for LE in state 43 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 43 resolved as shift
+WARNING: shift/reduce conflict for NE in state 43 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 71 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 71 resolved as shift
+WARNING: shift/reduce conflict for GT in state 71 resolved as shift
+WARNING: shift/reduce conflict for LT in state 71 resolved as shift
+WARNING: shift/reduce conflict for GE in state 71 resolved as shift
+WARNING: shift/reduce conflict for LE in state 71 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 71 resolved as shift
+WARNING: shift/reduce conflict for NE in state 71 resolved as shift
