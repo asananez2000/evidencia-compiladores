@@ -456,8 +456,12 @@ def execute_parse_tree(tree):
     root = tree.nodes[0]
     root_id = 0
     res = visit_node(tree, root_id, -1)
+    #check if res is an array, if it is, print each element
     if( type(res) == int or type(res) == float or type(res) == bool):
         print("TREE_RESULT: " , res)
+    elif(type(res) == np.ndarray):
+        for r in res:
+            print("TREE_RESULT: " , r)
 
 # --------------------------------------- FUNCTION TO VISIT NODES -----------------------------
 def visit_node(tree, node_id, from_id):

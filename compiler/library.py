@@ -5,8 +5,7 @@ import matplotlib.pyplot as plt
 def load_image(path):
     path = path.strip()
     return cv2.imread(path)
-
-
+    
 def save_image(filename, image):
     cv2.imwrite(filename, image)
 
