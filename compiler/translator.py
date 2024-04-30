@@ -9,7 +9,6 @@ from globals import NODE_COUNTER, parseGraph
 
 # --------------------- GRAPH VARIBLES -------------------------------
 draw = False
-
 # --------------------- GRAPH FUNCTION TO ADD NODE --------------------
 def add_node(attr):
     global parseGraph
@@ -18,8 +17,6 @@ def add_node(attr):
     attr["counter"] = NODE_COUNTER
     parseGraph.add_node( NODE_COUNTER , **attr)
     NODE_COUNTER += 1
-    print('Node Counter: ', NODE_COUNTER)
-    
 
     return parseGraph.nodes[NODE_COUNTER-1]
 
@@ -40,10 +37,10 @@ MINUS_OP = 2
 TIMES_OP = 3
 DIVIDE_OP = 4
 
-
 # ------------------------- RESERVED WORDS ------------------------------
 reserved = {
     'if': 'IF',
+    'else': 'ELSE',
 }
 
 # ------------------------- TOKENS --------------------------------------
@@ -68,12 +65,12 @@ tokens = (
     'EQ', 
     'NE',  
     'IF',
+    'ELSE',
     'TERNARY',
     'COLON',
     'AND',
     'OR',
 )
-
 
 # ---------------------------------- REGULAR EXPRESSIONS -----------------------
 t_PLUS = r'\+'
@@ -144,7 +141,6 @@ def p_assignment_assign(p):
     parseGraph.add_edge(node["counter"] , node_variable["counter"])
     parseGraph.add_edge(node["counter"] , p[3]["counter"])
     p[0] = node
-
 
 # ASSIGNMENT FLOW ----------------------------------------------------------------------
 def p_assignment_flow(p):
@@ -360,7 +356,6 @@ def p_expression_NE(p):
 
     p[0] = node
 
-
 # LOGICAL OPERATORS -------------------------------------------------------------------------
 def p_expression_AND(p):
     '''
@@ -394,7 +389,6 @@ def p_function_call_no_params(p):
     '''
     p[0] = add_node(  {'type':'FUNCTION_CALL' , 'label':f'FUN_{p[1]}' , 'value':p[1]} )
 
-
 def p_function_call_params(p):
     '''
     function_call : VARIABLE LPAREN params RPAREN
@@ -414,20 +408,19 @@ def p_params(p):
     else:
         p[0] = [p[1]]
 
-
 # CONDITIONAL STATEMENTS --------------------------------------------------------------------
-
-# Simple IF statement
-def p_expression_if(p):
+def p_if_else_statement(p):
     '''
-    expression : IF LPAREN expression RPAREN COLON expression
+    expression : IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     '''
     node = add_node({'type': 'IF', 'label': 'IF', 'value': ''})
     condition_node = p[3]
-    expression_node = p[6]
+    true_branch = p[6]
+    false_branch = p[9]
 
     parseGraph.add_edge(node["counter"], condition_node["counter"], label='condition')
-    parseGraph.add_edge(node["counter"], expression_node["counter"], label='expression')
+    parseGraph.add_edge(node["counter"], true_branch["counter"], label='true_branch')
+    parseGraph.add_edge(node["counter"], false_branch["counter"], label='false_branch')
 
     p[0] = node
 
@@ -538,12 +531,12 @@ def visit_node(tree, node_id, from_id):
     if current_node["type"] == "OR":
         return True if res[0] or res[1] else False
     
-    #Simple IF statement node logic
+    #IF ELSE statement node logic
     if current_node['type'] == 'IF':
         if res[0]:
             return res[1]
         else:
-            return None  
+            return res[2]
 
     #Ternary Operator node logic
     if current_node['type'] == 'TERNARY':

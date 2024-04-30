@@ -30,6 +30,7 @@ def reset_globals():
     ("16 == 4", [('NUMBER', 16), ('EQ', '=='), ('NUMBER', 4)]),
     ("16 != 4", [('NUMBER', 16), ('NE', '!='), ('NUMBER', 4)]),
     ("if(2==2):1+1", [('IF', 'if'), ('LPAREN', '('), ('NUMBER', 2), ('EQ', '=='), ('NUMBER', 2), ('RPAREN', ')'), ('COLON', ':'), ('NUMBER', 1), ('PLUS', '+'), ('NUMBER', 1)]),
+    ("if(2==2): 3 else: 1+1", [('IF', 'if'), ('LPAREN', '('), ('NUMBER', 2), ('EQ', '=='), ('NUMBER', 2), ('RPAREN', ')'), ('COLON', ':'), ('NUMBER', 3), ('ELSE', 'else'), ('COLON', ':'), ('NUMBER', 1), ('PLUS', '+'), ('NUMBER', 1)]),
     ("(2==2) && (1!=1)", [('LPAREN', '('), ('NUMBER', 2), ('EQ', '=='), ('NUMBER', 2), ('RPAREN', ')'), ('AND', '&&'), ('LPAREN', '('), ('NUMBER', 1), ('NE', '!='), ('NUMBER', 1), ('RPAREN', ')')]),
     ("(2==2) || (1!=1)", [('LPAREN', '('), ('NUMBER', 2), ('EQ', '=='), ('NUMBER', 2), ('RPAREN', ')'), ('OR', '||'), ('LPAREN', '('), ('NUMBER', 1), ('NE', '!='), ('NUMBER', 1), ('RPAREN', ')')]),
     ("(3 + 4) * 5", [('LPAREN', '('), ('NUMBER', 3), ('PLUS', '+'), ('NUMBER', 4), ('RPAREN', ')'), ('TIMES', '*'), ('NUMBER', 5)])
@@ -45,11 +46,24 @@ def test_lexer(test_input, expected_output):
 # Test cases for simple arithmetic operations
 @pytest.mark.parametrize("test_input,expected_output", [
     ("3 + 4", "7"),
-    ("7-5", "2"),
+    ("7 - 5", "2"),
     ("6 * 9", "54"),
     ("8 / 2", "4.0"),
     ("2 ^ 3", "8"),
-    ("2 * (3 + 4)", "14")
+    ("2 * (3 + 4)", "14"),
+    ("10 + 5", "15"),
+    ("15 - 8", "7"),
+    ("4 * 7", "28"),
+    ("10 / 3", "3.3333333333333335"),
+    ("5 ^ 2", "25"),
+    ("(2 + 3) * 4", "20"),
+    ("2 + 3 * 4", "14"),
+    ("(2 + 3) * (4 + 5)", "45"),
+    ("(10 + 5) / (3 - 1)", "7.5"),
+    ("(2 ^ 3) + (4 * 5)", "28"),
+    ("(10 + 5) / (3 - 1) + 2", "9.5"),
+    ("(2 + 3) * (4 + 5) - 10", "35"),
+    ("(2 + 3) * (4 + 5) / 2", "22.5")
 ])
 
 def test_simple_arithmetic(test_input, expected_output, reset_globals):
@@ -64,6 +78,12 @@ def test_simple_arithmetic(test_input, expected_output, reset_globals):
 @pytest.mark.parametrize("test_input,expected_output", [
     ("x = 5", "5"),
     ("y = x + 2", "7"),
+    ("z = 44 + 2", "46"),
+    ("a = 10", "10"),
+    ("b = 5 + 3", "8"),
+    ("c = a * b", "80"),
+    ("d = c / 2", "40.0"),
+    ("e = d - 10", "30.0")
 ])
 
 def test_variable_assignment(test_input, expected_output, reset_globals):
@@ -104,6 +124,14 @@ def test_comparison_operators(test_input, expected_output, reset_globals):
     ("(5 < 3) || (2 < 3)", "True"),
     ("(5 > 3) && (2 > 3)", "False"),
     ("(5 < 3) || (2 > 3)", "False"),
+    ("((5 > 3) && (2 < 3)) || ((4 > 2) && (1 < 5))", "True"),
+    ("((5 > 3) && (2 < 3)) || ((4 > 2) && (1 > 5))", "True"),
+    ("((5 > 3) && (2 > 3)) || ((4 > 2) && (1 < 5))", "True"),
+    ("((5 > 3) && (2 > 3)) || ((4 > 2) && (1 > 5))", "False"),
+    ("((5 > 3) || (2 < 3)) && ((4 > 2) || (1 < 5))", "True"),
+    ("((5 > 3) || (2 < 3)) && ((4 > 2) || (1 > 5))", "True"),
+    ("((5 > 3) || (2 > 3)) && ((4 > 2) || (1 < 5))", "True"),
+    ("((5 > 3) || (2 > 3)) && ((4 > 2) || (1 > 5))", "True")
 ])
 
 def test_logical_operators(test_input, expected_output, reset_globals):
@@ -130,7 +158,6 @@ def test_string_handling(test_input, expected_output, reset_globals):
     
 # Test cases for function calls
 @pytest.mark.parametrize("test_input,expected_output", [
-    #("print()", "None"),
     ("max(1, 2)", "2"),
     ("max(1, max(2, 3))", "3"),
     ("load_image(\"test.jpg\")", cv2.imread("test.jpg")),
@@ -153,10 +180,28 @@ def test_function_calls(test_input, expected_output, reset_globals):
 
 # Test cases for conditional statements
 @pytest.mark.parametrize("test_input,expected_output", [
-    ("if((10==10)):10", "10"),
-    ("if((10==20)): 8 + 11", "None"),
-    ("if((2==1) && (2>1)): 10 + 9", "None"),
-    ("if((2==1) || (2>1)): 10 + 9", "19"),
+    ("if (1!=1): 8-10 else: 9+14", "23"),
+    ("if (1==1): 8-10 else: 9+14", "-2"),
+    ("if (2 == 2): 10 else: 0", "10"),
+    ("if (4 > 8): 4 else: 8", "8"),
+    ("(33 > 22)?(3):(0)", "3"),
+    ("(4 != 4)?(4):(100)", "100"),
+    ("(5 >= 10)?(32):(0)", "0"),
+    ("(2 < 5)?(10):(20)", "10"),
+    ("(7 >= 7)?(100):(200)", "100"),
+    ("if (3 > 2): 5+5 else: 2-1", "10"),
+    ("if (8 <= 10): 3*3 else: 4/2", "9"),
+    ("(6 == 6)?(8):(9)", "8"),
+    ("(1 != 2)?(100):(200)", "100"),
+    ("(4 > 7)?(1):(2)", "2"),
+    ("(5 >= 5)?(10):(20)", "10"),
+    ("if (2 < 3): 4*4 else: 5-1", "16"),
+    ("if (9 <= 10): 6/2 else: 8*2", "3.0"),
+    ("(7 == 7)?(5):(10)", "5"),
+    ("(3 != 3)?(100):(200)", "200"),
+    ("(6 > 9)?(1):(2)", "2"),
+    ("(5 >= 6)?(1):(2)", "2"),
+    ("if (4 == 4): 7+7 else: 8-2", "14")
 ])
 
 def test_conditional_statements(test_input, expected_output, reset_globals):
