@@ -18,6 +18,7 @@ def add_node(attr):
     attr["counter"] = NODE_COUNTER
     parseGraph.add_node( NODE_COUNTER , **attr)
     NODE_COUNTER += 1
+    print('Node Counter: ', NODE_COUNTER)
     
 
     return parseGraph.nodes[NODE_COUNTER-1]
@@ -31,6 +32,7 @@ symbol_table["save_image"] = save_image
 symbol_table["gen_matrix"] = gen_matrix
 symbol_table["gen_vector"] = gen_vector
 symbol_table["show_image"] = show_image
+symbol_table["search_cv2"] = search_cv2
 
 
 PLUS_OP = 1
@@ -460,9 +462,10 @@ def execute_parse_tree(tree):
     return res
 
 def execute_parse_tree_testing(tree):
-    root = tree.nodes[0]
-    root_id = 0
-    res = visit_node(tree, root_id, -1)
+    root = next((node for node, data in tree.nodes(data=True) if data.get('type') == 'INITIAL'), None)
+    if root is None:
+        raise Exception("Root node not found in graph")
+    res = visit_node(tree, root, -1)
     return res
 
 # --------------------------------------- FUNCTION TO VISIT NODES -----------------------------
