@@ -68,3 +68,13 @@ En esta sección se listan de manera general las reglas implementadas en el trad
 
 Estas reglas están diseñadas para ser flexibles y potentes, permitiendo a los desarrolladores crear flujos de trabajo complejos con facilidad.
 
+## Sumatoria de puntos
+
+En el presente entregable, se desarrollaron los elementos que resultan en la siguiente sumatoria de puntos:
+
+| Característica | Puntaje |
+|----------|----------|
+| Implementar condicionales   | 75 | 
+| Implementación de pruebas automatizadas | 25 | 
+| Todas las tareas entregadas (Todo el equipo cuenta con puntaje completo)   | 15 | 
+||= 115
