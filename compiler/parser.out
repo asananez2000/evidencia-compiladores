@@ -36,16 +36,17 @@ Rule 30    function_call -> VARIABLE LPAREN RPAREN
 Rule 31    function_call -> VARIABLE LPAREN params RPAREN
 Rule 32    params -> params COMMA expression
 Rule 33    params -> expression
-Rule 34    expression -> IF LPAREN expression RPAREN COLON expression
+Rule 34    expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression
 Rule 35    expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
 
 Terminals, with rules where they appear
 
 AND                  : 27
-COLON                : 34 35
+COLON                : 34 34 35
 COMMA                : 32
 CONNECT              : 3 4
 DIVIDE               : 14
+ELSE                 : 34
 EQ                   : 25
 EXP                  : 16
 GE                   : 23
@@ -71,7 +72,7 @@ Nonterminals, with rules where they appear
 
 assignment           : 0
 exponent             : 13 14 15
-expression           : 1 7 8 9 18 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 32 33 34 34 35 35 35
+expression           : 1 7 8 9 18 21 21 22 22 23 23 24 24 25 25 26 26 27 27 28 28 32 33 34 34 34 35 35 35
 factor               : 16 16 17
 flow                 : 2
 flow_function_call   : 4 5
@@ -101,7 +102,7 @@ state 0
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -200,6 +201,7 @@ state 4
     $end            reduce using rule 10 (expression -> term .)
     RPAREN          reduce using rule 10 (expression -> term .)
     COMMA           reduce using rule 10 (expression -> term .)
+    ELSE            reduce using rule 10 (expression -> term .)
     TIMES           shift and go to state 23
     DIVIDE          shift and go to state 24
 
@@ -219,6 +221,7 @@ state 5
     $end            reduce using rule 11 (expression -> string .)
     RPAREN          reduce using rule 11 (expression -> string .)
     COMMA           reduce using rule 11 (expression -> string .)
+    ELSE            reduce using rule 11 (expression -> string .)
 
 
 state 6
@@ -239,7 +242,7 @@ state 6
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -269,7 +272,7 @@ state 6
 
 state 7
 
-    (34) expression -> IF . LPAREN expression RPAREN COLON expression
+    (34) expression -> IF . LPAREN expression RPAREN COLON expression ELSE COLON expression
 
     LPAREN          shift and go to state 27
 
@@ -291,6 +294,7 @@ state 8
     $end            reduce using rule 15 (term -> exponent .)
     RPAREN          reduce using rule 15 (term -> exponent .)
     COMMA           reduce using rule 15 (term -> exponent .)
+    ELSE            reduce using rule 15 (term -> exponent .)
 
 
 state 9
@@ -308,6 +312,7 @@ state 9
     $end            reduce using rule 12 (string -> STRING .)
     RPAREN          reduce using rule 12 (string -> STRING .)
     COMMA           reduce using rule 12 (string -> STRING .)
+    ELSE            reduce using rule 12 (string -> STRING .)
 
 
 state 10
@@ -329,6 +334,7 @@ state 10
     $end            reduce using rule 17 (exponent -> factor .)
     RPAREN          reduce using rule 17 (exponent -> factor .)
     COMMA           reduce using rule 17 (exponent -> factor .)
+    ELSE            reduce using rule 17 (exponent -> factor .)
 
 
 state 11
@@ -349,6 +355,7 @@ state 11
     $end            reduce using rule 19 (factor -> NUMBER .)
     RPAREN          reduce using rule 19 (factor -> NUMBER .)
     COMMA           reduce using rule 19 (factor -> NUMBER .)
+    ELSE            reduce using rule 19 (factor -> NUMBER .)
 
 
 state 12
@@ -369,6 +376,7 @@ state 12
     $end            reduce using rule 29 (factor -> function_call .)
     RPAREN          reduce using rule 29 (factor -> function_call .)
     COMMA           reduce using rule 29 (factor -> function_call .)
+    ELSE            reduce using rule 29 (factor -> function_call .)
 
 
 state 13
@@ -387,7 +395,7 @@ state 13
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (3) flow -> . VARIABLE CONNECT flow_functions
     (13) term -> . term TIMES exponent
@@ -435,7 +443,7 @@ state 14
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -528,7 +536,7 @@ state 17
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -571,7 +579,7 @@ state 18
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -614,7 +622,7 @@ state 19
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -657,7 +665,7 @@ state 20
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -700,7 +708,7 @@ state 21
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -743,7 +751,7 @@ state 22
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -857,12 +865,13 @@ state 26
     NE              reduce using rule 20 (factor -> VARIABLE .)
     COMMA           reduce using rule 20 (factor -> VARIABLE .)
     $end            reduce using rule 20 (factor -> VARIABLE .)
+    ELSE            reduce using rule 20 (factor -> VARIABLE .)
     LPAREN          shift and go to state 14
 
 
 state 27
 
-    (34) expression -> IF LPAREN . expression RPAREN COLON expression
+    (34) expression -> IF LPAREN . expression RPAREN COLON expression ELSE COLON expression
     (8) expression -> . expression PLUS term
     (9) expression -> . expression MINUS term
     (10) expression -> . term
@@ -875,7 +884,7 @@ state 27
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -989,6 +998,7 @@ state 32
     $end            reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
     RPAREN          reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
     COMMA           reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
+    ELSE            reduce using rule 30 (function_call -> VARIABLE LPAREN RPAREN .)
 
 
 state 33
@@ -1041,6 +1051,7 @@ state 35
     $end            reduce using rule 8 (expression -> expression PLUS term .)
     RPAREN          reduce using rule 8 (expression -> expression PLUS term .)
     COMMA           reduce using rule 8 (expression -> expression PLUS term .)
+    ELSE            reduce using rule 8 (expression -> expression PLUS term .)
     TIMES           shift and go to state 23
     DIVIDE          shift and go to state 24
 
@@ -1060,7 +1071,7 @@ state 36
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -1105,6 +1116,7 @@ state 37
     $end            reduce using rule 9 (expression -> expression MINUS term .)
     RPAREN          reduce using rule 9 (expression -> expression MINUS term .)
     COMMA           reduce using rule 9 (expression -> expression MINUS term .)
+    ELSE            reduce using rule 9 (expression -> expression MINUS term .)
     TIMES           shift and go to state 23
     DIVIDE          shift and go to state 24
 
@@ -1132,6 +1144,7 @@ state 38
     $end            reduce using rule 21 (expression -> expression GT expression .)
     RPAREN          reduce using rule 21 (expression -> expression GT expression .)
     COMMA           reduce using rule 21 (expression -> expression GT expression .)
+    ELSE            reduce using rule 21 (expression -> expression GT expression .)
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1174,6 +1187,7 @@ state 39
     $end            reduce using rule 22 (expression -> expression LT expression .)
     RPAREN          reduce using rule 22 (expression -> expression LT expression .)
     COMMA           reduce using rule 22 (expression -> expression LT expression .)
+    ELSE            reduce using rule 22 (expression -> expression LT expression .)
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1216,6 +1230,7 @@ state 40
     $end            reduce using rule 23 (expression -> expression GE expression .)
     RPAREN          reduce using rule 23 (expression -> expression GE expression .)
     COMMA           reduce using rule 23 (expression -> expression GE expression .)
+    ELSE            reduce using rule 23 (expression -> expression GE expression .)
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1258,6 +1273,7 @@ state 41
     $end            reduce using rule 24 (expression -> expression LE expression .)
     RPAREN          reduce using rule 24 (expression -> expression LE expression .)
     COMMA           reduce using rule 24 (expression -> expression LE expression .)
+    ELSE            reduce using rule 24 (expression -> expression LE expression .)
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1300,6 +1316,7 @@ state 42
     $end            reduce using rule 25 (expression -> expression EQ expression .)
     RPAREN          reduce using rule 25 (expression -> expression EQ expression .)
     COMMA           reduce using rule 25 (expression -> expression EQ expression .)
+    ELSE            reduce using rule 25 (expression -> expression EQ expression .)
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1342,6 +1359,7 @@ state 43
     $end            reduce using rule 26 (expression -> expression NE expression .)
     RPAREN          reduce using rule 26 (expression -> expression NE expression .)
     COMMA           reduce using rule 26 (expression -> expression NE expression .)
+    ELSE            reduce using rule 26 (expression -> expression NE expression .)
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1378,6 +1396,7 @@ state 44
     $end            reduce using rule 13 (term -> term TIMES exponent .)
     RPAREN          reduce using rule 13 (term -> term TIMES exponent .)
     COMMA           reduce using rule 13 (term -> term TIMES exponent .)
+    ELSE            reduce using rule 13 (term -> term TIMES exponent .)
 
 
 state 45
@@ -1397,6 +1416,7 @@ state 45
     $end            reduce using rule 14 (term -> term DIVIDE exponent .)
     RPAREN          reduce using rule 14 (term -> term DIVIDE exponent .)
     COMMA           reduce using rule 14 (term -> term DIVIDE exponent .)
+    ELSE            reduce using rule 14 (term -> term DIVIDE exponent .)
 
 
 state 46
@@ -1422,11 +1442,12 @@ state 46
     $end            reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
     RPAREN          reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
     COMMA           reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    ELSE            reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
 
 
 state 47
 
-    (34) expression -> IF LPAREN expression . RPAREN COLON expression
+    (34) expression -> IF LPAREN expression . RPAREN COLON expression ELSE COLON expression
     (8) expression -> expression . PLUS term
     (9) expression -> expression . MINUS term
     (21) expression -> expression . GT expression
@@ -1464,6 +1485,7 @@ state 48
     $end            reduce using rule 16 (exponent -> factor EXP factor .)
     RPAREN          reduce using rule 16 (exponent -> factor EXP factor .)
     COMMA           reduce using rule 16 (exponent -> factor EXP factor .)
+    ELSE            reduce using rule 16 (exponent -> factor EXP factor .)
 
 
 state 49
@@ -1496,6 +1518,7 @@ state 50
     $end            reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
     RPAREN          reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
     COMMA           reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
+    ELSE            reduce using rule 31 (function_call -> VARIABLE LPAREN params RPAREN .)
 
 
 state 51
@@ -1513,7 +1536,7 @@ state 51
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -1587,7 +1610,7 @@ state 55
 
 state 56
 
-    (34) expression -> IF LPAREN expression RPAREN . COLON expression
+    (34) expression -> IF LPAREN expression RPAREN . COLON expression ELSE COLON expression
 
     COLON           shift and go to state 65
 
@@ -1656,6 +1679,7 @@ state 61
     $end            reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
     RPAREN          reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
     COMMA           reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
+    ELSE            reduce using rule 18 (exponent -> LPAREN expression RPAREN .)
 
 
 state 62
@@ -1673,7 +1697,7 @@ state 62
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -1716,7 +1740,7 @@ state 63
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -1759,7 +1783,7 @@ state 64
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -1789,7 +1813,7 @@ state 64
 
 state 65
 
-    (34) expression -> IF LPAREN expression RPAREN COLON . expression
+    (34) expression -> IF LPAREN expression RPAREN COLON . expression ELSE COLON expression
     (8) expression -> . expression PLUS term
     (9) expression -> . expression MINUS term
     (10) expression -> . term
@@ -1802,7 +1826,7 @@ state 65
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -1847,7 +1871,7 @@ state 66
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -1959,7 +1983,7 @@ state 70
 
 state 71
 
-    (34) expression -> IF LPAREN expression RPAREN COLON expression .
+    (34) expression -> IF LPAREN expression RPAREN COLON expression . ELSE COLON expression
     (8) expression -> expression . PLUS term
     (9) expression -> expression . MINUS term
     (21) expression -> expression . GT expression
@@ -1969,17 +1993,7 @@ state 71
     (25) expression -> expression . EQ expression
     (26) expression -> expression . NE expression
 
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GE resolved as shift
-  ! shift/reduce conflict for LE resolved as shift
-  ! shift/reduce conflict for EQ resolved as shift
-  ! shift/reduce conflict for NE resolved as shift
-    $end            reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .)
-    RPAREN          reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .)
-    COMMA           reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .)
+    ELSE            shift and go to state 77
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -1989,22 +2003,13 @@ state 71
     EQ              shift and go to state 21
     NE              shift and go to state 22
 
-  ! PLUS            [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! MINUS           [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! GT              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! LT              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! GE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! LE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! EQ              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-  ! NE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression .) ]
-
 
 state 72
 
     (6) flow_function_call -> VARIABLE LPAREN params . RPAREN
     (32) params -> params . COMMA expression
 
-    RPAREN          shift and go to state 77
+    RPAREN          shift and go to state 78
     COMMA           shift and go to state 51
 
 
@@ -2030,6 +2035,7 @@ state 74
     $end            reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
     RPAREN          reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
     COMMA           reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
+    ELSE            reduce using rule 27 (expression -> LPAREN expression RPAREN AND LPAREN expression RPAREN .)
 
 
 state 75
@@ -2047,16 +2053,24 @@ state 75
     $end            reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
     RPAREN          reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
     COMMA           reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
+    ELSE            reduce using rule 28 (expression -> LPAREN expression RPAREN OR LPAREN expression RPAREN .)
 
 
 state 76
 
     (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN . COLON LPAREN expression RPAREN
 
-    COLON           shift and go to state 78
+    COLON           shift and go to state 79
 
 
 state 77
+
+    (34) expression -> IF LPAREN expression RPAREN COLON expression ELSE . COLON expression
+
+    COLON           shift and go to state 80
+
+
+state 78
 
     (6) flow_function_call -> VARIABLE LPAREN params RPAREN .
 
@@ -2064,16 +2078,16 @@ state 77
     $end            reduce using rule 6 (flow_function_call -> VARIABLE LPAREN params RPAREN .)
 
 
-state 78
+state 79
 
     (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON . LPAREN expression RPAREN
 
-    LPAREN          shift and go to state 79
+    LPAREN          shift and go to state 81
 
 
-state 79
+state 80
 
-    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN . expression RPAREN
+    (34) expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON . expression
     (8) expression -> . expression PLUS term
     (9) expression -> . expression MINUS term
     (10) expression -> . term
@@ -2086,7 +2100,7 @@ state 79
     (26) expression -> . expression NE expression
     (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
     (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
-    (34) expression -> . IF LPAREN expression RPAREN COLON expression
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
     (13) term -> . term TIMES exponent
     (14) term -> . term DIVIDE exponent
@@ -2107,14 +2121,100 @@ state 79
     NUMBER          shift and go to state 11
     VARIABLE        shift and go to state 26
 
-    expression                     shift and go to state 80
+    expression                     shift and go to state 82
     term                           shift and go to state 4
     string                         shift and go to state 5
     exponent                       shift and go to state 8
     factor                         shift and go to state 10
     function_call                  shift and go to state 12
 
-state 80
+state 81
+
+    (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN . expression RPAREN
+    (8) expression -> . expression PLUS term
+    (9) expression -> . expression MINUS term
+    (10) expression -> . term
+    (11) expression -> . string
+    (21) expression -> . expression GT expression
+    (22) expression -> . expression LT expression
+    (23) expression -> . expression GE expression
+    (24) expression -> . expression LE expression
+    (25) expression -> . expression EQ expression
+    (26) expression -> . expression NE expression
+    (27) expression -> . LPAREN expression RPAREN AND LPAREN expression RPAREN
+    (28) expression -> . LPAREN expression RPAREN OR LPAREN expression RPAREN
+    (34) expression -> . IF LPAREN expression RPAREN COLON expression ELSE COLON expression
+    (35) expression -> . LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN
+    (13) term -> . term TIMES exponent
+    (14) term -> . term DIVIDE exponent
+    (15) term -> . exponent
+    (12) string -> . STRING
+    (16) exponent -> . factor EXP factor
+    (17) exponent -> . factor
+    (18) exponent -> . LPAREN expression RPAREN
+    (19) factor -> . NUMBER
+    (20) factor -> . VARIABLE
+    (29) factor -> . function_call
+    (30) function_call -> . VARIABLE LPAREN RPAREN
+    (31) function_call -> . VARIABLE LPAREN params RPAREN
+
+    LPAREN          shift and go to state 6
+    IF              shift and go to state 7
+    STRING          shift and go to state 9
+    NUMBER          shift and go to state 11
+    VARIABLE        shift and go to state 26
+
+    expression                     shift and go to state 83
+    term                           shift and go to state 4
+    string                         shift and go to state 5
+    exponent                       shift and go to state 8
+    factor                         shift and go to state 10
+    function_call                  shift and go to state 12
+
+state 82
+
+    (34) expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .
+    (8) expression -> expression . PLUS term
+    (9) expression -> expression . MINUS term
+    (21) expression -> expression . GT expression
+    (22) expression -> expression . LT expression
+    (23) expression -> expression . GE expression
+    (24) expression -> expression . LE expression
+    (25) expression -> expression . EQ expression
+    (26) expression -> expression . NE expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for GT resolved as shift
+  ! shift/reduce conflict for LT resolved as shift
+  ! shift/reduce conflict for GE resolved as shift
+  ! shift/reduce conflict for LE resolved as shift
+  ! shift/reduce conflict for EQ resolved as shift
+  ! shift/reduce conflict for NE resolved as shift
+    $end            reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .)
+    RPAREN          reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .)
+    COMMA           reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .)
+    ELSE            reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .)
+    PLUS            shift and go to state 15
+    MINUS           shift and go to state 16
+    GT              shift and go to state 17
+    LT              shift and go to state 18
+    GE              shift and go to state 19
+    LE              shift and go to state 20
+    EQ              shift and go to state 21
+    NE              shift and go to state 22
+
+  ! PLUS            [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .) ]
+  ! MINUS           [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .) ]
+  ! GT              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .) ]
+  ! LT              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .) ]
+  ! GE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .) ]
+  ! LE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .) ]
+  ! EQ              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .) ]
+  ! NE              [ reduce using rule 34 (expression -> IF LPAREN expression RPAREN COLON expression ELSE COLON expression .) ]
+
+
+state 83
 
     (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression . RPAREN
     (8) expression -> expression . PLUS term
@@ -2126,7 +2226,7 @@ state 80
     (25) expression -> expression . EQ expression
     (26) expression -> expression . NE expression
 
-    RPAREN          shift and go to state 81
+    RPAREN          shift and go to state 84
     PLUS            shift and go to state 15
     MINUS           shift and go to state 16
     GT              shift and go to state 17
@@ -2137,7 +2237,7 @@ state 80
     NE              shift and go to state 22
 
 
-state 81
+state 84
 
     (35) expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .
 
@@ -2152,6 +2252,7 @@ state 81
     $end            reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
     RPAREN          reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
     COMMA           reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
+    ELSE            reduce using rule 35 (expression -> LPAREN expression RPAREN TERNARY LPAREN expression RPAREN COLON LPAREN expression RPAREN .)
 
 WARNING: 
 WARNING: Conflicts:
@@ -2204,11 +2305,11 @@ WARNING: shift/reduce conflict for GE in state 43 resolved as shift
 WARNING: shift/reduce conflict for LE in state 43 resolved as shift
 WARNING: shift/reduce conflict for EQ in state 43 resolved as shift
 WARNING: shift/reduce conflict for NE in state 43 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 71 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 71 resolved as shift
-WARNING: shift/reduce conflict for GT in state 71 resolved as shift
-WARNING: shift/reduce conflict for LT in state 71 resolved as shift
-WARNING: shift/reduce conflict for GE in state 71 resolved as shift
-WARNING: shift/reduce conflict for LE in state 71 resolved as shift
-WARNING: shift/reduce conflict for EQ in state 71 resolved as shift
-WARNING: shift/reduce conflict for NE in state 71 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 82 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 82 resolved as shift
+WARNING: shift/reduce conflict for GT in state 82 resolved as shift
+WARNING: shift/reduce conflict for LT in state 82 resolved as shift
+WARNING: shift/reduce conflict for GE in state 82 resolved as shift
+WARNING: shift/reduce conflict for LE in state 82 resolved as shift
+WARNING: shift/reduce conflict for EQ in state 82 resolved as shift
+WARNING: shift/reduce conflict for NE in state 82 resolved as shift

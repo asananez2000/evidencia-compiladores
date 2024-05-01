@@ -4,15 +4,12 @@ import networkx as nx
 from networkx.drawing.nx_pydot import graphviz_layout
 import matplotlib.pyplot as plt
 from library import *
-
+from globals import NODE_COUNTER, parseGraph
 
 
 # --------------------- GRAPH VARIBLES -------------------------------
-parseGraph = None
-draw = True
-NODE_COUNTER = 0
-
-# --------------------- GRAPH FUCNTION TO ADD NODE --------------------
+draw = False
+# --------------------- GRAPH FUNCTION TO ADD NODE --------------------
 def add_node(attr):
     global parseGraph
     global NODE_COUNTER
@@ -32,6 +29,7 @@ symbol_table["save_image"] = save_image
 symbol_table["gen_matrix"] = gen_matrix
 symbol_table["gen_vector"] = gen_vector
 symbol_table["show_image"] = show_image
+symbol_table["search_cv2"] = search_cv2
 
 
 PLUS_OP = 1
@@ -39,10 +37,10 @@ MINUS_OP = 2
 TIMES_OP = 3
 DIVIDE_OP = 4
 
-
 # ------------------------- RESERVED WORDS ------------------------------
 reserved = {
     'if': 'IF',
+    'else': 'ELSE',
 }
 
 # ------------------------- TOKENS --------------------------------------
@@ -67,12 +65,12 @@ tokens = (
     'EQ', 
     'NE',  
     'IF',
+    'ELSE',
     'TERNARY',
     'COLON',
     'AND',
     'OR',
 )
-
 
 # ---------------------------------- REGULAR EXPRESSIONS -----------------------
 t_PLUS = r'\+'
@@ -143,7 +141,6 @@ def p_assignment_assign(p):
     parseGraph.add_edge(node["counter"] , node_variable["counter"])
     parseGraph.add_edge(node["counter"] , p[3]["counter"])
     p[0] = node
-
 
 # ASSIGNMENT FLOW ----------------------------------------------------------------------
 def p_assignment_flow(p):
@@ -359,7 +356,6 @@ def p_expression_NE(p):
 
     p[0] = node
 
-
 # LOGICAL OPERATORS -------------------------------------------------------------------------
 def p_expression_AND(p):
     '''
@@ -393,7 +389,6 @@ def p_function_call_no_params(p):
     '''
     p[0] = add_node(  {'type':'FUNCTION_CALL' , 'label':f'FUN_{p[1]}' , 'value':p[1]} )
 
-
 def p_function_call_params(p):
     '''
     function_call : VARIABLE LPAREN params RPAREN
@@ -413,20 +408,19 @@ def p_params(p):
     else:
         p[0] = [p[1]]
 
-
 # CONDITIONAL STATEMENTS --------------------------------------------------------------------
-
-# Simple IF statement
-def p_expression_if(p):
+def p_if_else_statement(p):
     '''
-    expression : IF LPAREN expression RPAREN COLON expression
+    expression : IF LPAREN expression RPAREN COLON expression ELSE COLON expression
     '''
     node = add_node({'type': 'IF', 'label': 'IF', 'value': ''})
     condition_node = p[3]
-    expression_node = p[6]
+    true_branch = p[6]
+    false_branch = p[9]
 
     parseGraph.add_edge(node["counter"], condition_node["counter"], label='condition')
-    parseGraph.add_edge(node["counter"], expression_node["counter"], label='expression')
+    parseGraph.add_edge(node["counter"], true_branch["counter"], label='true_branch')
+    parseGraph.add_edge(node["counter"], false_branch["counter"], label='false_branch')
 
     p[0] = node
 
@@ -458,6 +452,14 @@ def execute_parse_tree(tree):
     res = visit_node(tree, root_id, -1)
     if( type(res) == int or type(res) == float or type(res) == bool):
         print("TREE_RESULT: " , res)
+    return res
+
+def execute_parse_tree_testing(tree):
+    root = next((node for node, data in tree.nodes(data=True) if data.get('type') == 'INITIAL'), None)
+    if root is None:
+        raise Exception("Root node not found in graph")
+    res = visit_node(tree, root, -1)
+    return res
 
 # --------------------------------------- FUNCTION TO VISIT NODES -----------------------------
 def visit_node(tree, node_id, from_id):
@@ -529,12 +531,12 @@ def visit_node(tree, node_id, from_id):
     if current_node["type"] == "OR":
         return True if res[0] or res[1] else False
     
-    #Simple IF statement node logic
+    #IF ELSE statement node logic
     if current_node['type'] == 'IF':
         if res[0]:
             return res[1]
         else:
-            return None  
+            return res[2]
 
     #Ternary Operator node logic
     if current_node['type'] == 'TERNARY':
@@ -580,34 +582,35 @@ def visit_node(tree, node_id, from_id):
 parser = yacc.yacc()
 
 # ---------------------------------------- LEXER EXECUTION  -------------------------------
-while True:
-    try:
-        data = input(">")
-        if(data == 'exit'):
+if __name__ == '__main__':
+    while True:
+        try:
+            data = input(">")
+            if(data == 'exit'):
+                break
+            
+            if(data == 'symbols'):
+                print(symbol_table)
+                continue
+
+        except EOFError:
             break
         
-        if(data == 'symbols'):
-            print(symbol_table)
-            continue
+        if not data: continue 
+        
+        NODE_COUNTER = 0
+        parseGraph = nx.Graph()
+        root = add_node({"type":"INITIAL" , "label":"INIT"})
+        result = parser.parse(data)
+        parseGraph.add_edge(root["counter"], result["counter"])
+        
+        labels = nx.get_node_attributes(parseGraph, 'label')
 
-    except EOFError:
-        break
-    
-    if not data: continue 
-    
-    NODE_COUNTER = 0
-    parseGraph = nx.Graph()
-    root = add_node({"type":"INITIAL" , "label":"INIT"})
-    result = parser.parse(data)
-    parseGraph.add_edge(root["counter"], result["counter"])
-    
-    labels = nx.get_node_attributes(parseGraph, 'label')
+        if(draw):
+            pos = graphviz_layout(parseGraph, prog="dot")
+            nx.draw(parseGraph, pos, labels=labels, with_labels = True)
+            plt.show()
 
-    if(draw):
-        pos = graphviz_layout(parseGraph, prog="dot")
-        nx.draw(parseGraph, pos, labels=labels, with_labels = True)
-        plt.show()
-
-    execute_parse_tree(parseGraph)
+        execute_parse_tree(parseGraph)
               
-print("Finished, accepted")
+    print("Finished, accepted")
