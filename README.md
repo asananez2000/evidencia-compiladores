@@ -2,11 +2,7 @@
 
 ## Objetivo
 
-El objetivo de este proyecto es implementar una herramienta que permita diseñar flujos de trabajo con imágenes utilizando comandos del lenguaje, facilitando así el acceso a funciones de filtrado y procesamiento de imágenes de OpenCV.
-
-## Introducción
-
-El proyecto desarrolla una herramienta que asiste a programadores en la automatización de tareas, especialmente en el ámbito del procesamiento de imágenes. Esto se logra a través de la implementación de flujos de transformaciones de imágenes utilizando secuencias del lenguaje y la ejecución de bloques de tareas desde archivos.
+El objetivo de este proyecto es implementar una traductor que permita aceptar expresiones de lenguaje como aritmética básica, asignación de variables, manejo de string y condicionales; así como diseñar flujos de trabajo con imágenes, facilitando así el acceso a funciones de filtrado y procesamiento de imágenes de OpenCV.
 
 ## Desarrollo
 
@@ -14,13 +10,11 @@ La herramienta permite:
 
 - Facilitar el acceso a funciones de filtrado y procesamiento de imágenes de OpenCV.
 - Implementar flujos de transformaciones en imágenes a través de secuencias del lenguaje.
-- Permitir la ejecución de bloques completos de tareas leídos desde archivos.
 - Exportar los resultados del procesamiento de una imagen con un archivo de salida.
-- Ejecutar funciones para el análisis de imágenes como histogramas, enmascaramiento, o la separación de subáreas.
 
 ## Método
 
-El proyecto se basa en el código visto en clase, con extensiones para manejar diversos aspectos del procesamiento de imágenes. Se espera que los usuarios puedan utilizar la herramienta a través de comandos específicos que serán procesados por el traductor implementado.
+El proyecto se desarrollo utilizando la herramienta de Python ply, la cual permite, con la ayuda de lex y yacc, el desarrollo de un compilador o traductor. Asímismo se utilizo Graphviz en conjunto con networkkx para la visualización del árbol de sintaxis. Se integró también, como parte de a funcionalidad, la posibilidad de utilizar funciones externas de la librería OpenCV.
 
 ## Cómo Empezar
 
@@ -55,14 +49,14 @@ pytest
 
 ## Reglas del Traductor Implementadas
 
-En esta sección se listan de manera general las reglas implementadas en el traductor de flujos de imagen, las cuales facilitan el diseño y la ejecución de tareas de procesamiento de imágenes:
+En esta sección se listan de manera general las reglas implementadas en el traductor:
 
 - 📝 **Asignaciones**: Permite asignar valores a variables o resultados de expresiones a variables.
 - 🔍 **Operaciones Aritméticas**: Soporta operaciones básicas como suma (`+`), resta (`-`), multiplicación (`*`) y división (`/`).
 - 🔢 **Comparaciones**: Incluye operadores de comparación como mayor que (`>`), menor que (`<`), igual (`==`), diferente (`!=`), mayor o igual (`>=`), y menor o igual (`<=`).
 - 🔄 **Operadores Lógicos**: Implementa operadores lógicos AND (`&&`) y OR (`||`) para combinar condiciones.
 - 📂 **Acceso a Funciones de Imágenes**: Facilita el acceso a funciones específicas de OpenCV para cargar, guardar, y mostrar imágenes, además de otras funciones de procesamiento avanzado.
-- 🔄 **Estructuras de Control**: Soporta instrucciones condicionales `if` y `else` para ejecutar diferentes bloques de código basados en condiciones.
+- 🔄 **Condicionales**: Soporta instrucciones condicionales `if` `else` y operación ternaria `?` `:` para ejecutar diferentes bloques de código basados en condiciones.
 - 🧮 **Funciones Matemáticas y de Transformación**: Permite llamar funciones para manipular matrices y vectores, crucial para el procesamiento de datos de imágenes.
 - 🖼️ **Flujos de Trabajo con Imágenes**: Permite definir y ejecutar secuencias de transformaciones y análisis de imágenes, leyendo los comandos desde archivos o entradas de usuario.
 
