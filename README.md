@@ -1,5 +1,15 @@
 # Evidencia Final Compiladores: Traductor de Flujos de Imagen
 
+## Integrantes
+- Sebastián González Villacorta - A01029746
+
+    [Video Reflexión Personal](https://drive.google.com/file/d/15WJpszDJaztdohZ5SAzHtjiyj4yvEniJ/view?usp=drive_link)
+- Andreína
+
+    [Video Reflexión Personal]()
+- Luis Javier
+
+    [Video Reflexión Personal]()
 ## Objetivo
 
 El objetivo de este proyecto es implementar una traductor que permita aceptar expresiones de lenguaje como aritmética básica, asignación de variables, manejo de string y condicionales; así como diseñar flujos de trabajo con imágenes, facilitando así el acceso a funciones de filtrado y procesamiento de imágenes de OpenCV.
