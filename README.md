@@ -6,7 +6,7 @@
     [Video Reflexión Personal](https://drive.google.com/file/d/15WJpszDJaztdohZ5SAzHtjiyj4yvEniJ/view?usp=drive_link)
 - Andreína
 
-    [Video Reflexión Personal]()
+    [Video Reflexión Personal](https://drive.google.com/file/d/19YFvgJrHd-TsQb3tQbNohQVhoU7u7bGH/view?usp=drive_link)
 - Luis Javier
 
     [Video Reflexión Personal](https://youtu.be/NIK9atA5SQo)
