@@ -6,10 +6,10 @@
     [Video Reflexión Personal](https://drive.google.com/file/d/15WJpszDJaztdohZ5SAzHtjiyj4yvEniJ/view?usp=drive_link)
 - Andreína
 
-    [Video Reflexión Personal]()
+    [Video Reflexión Personal](https://drive.google.com/file/d/19YFvgJrHd-TsQb3tQbNohQVhoU7u7bGH/view?usp=drive_link)
 - Luis Javier
 
-    [Video Reflexión Personal]()
+    [Video Reflexión Personal](https://youtu.be/NIK9atA5SQo)
 ## Objetivo
 
 El objetivo de este proyecto es implementar una traductor que permita aceptar expresiones de lenguaje como aritmética básica, asignación de variables, manejo de string y condicionales; así como diseñar flujos de trabajo con imágenes, facilitando así el acceso a funciones de filtrado y procesamiento de imágenes de OpenCV.
